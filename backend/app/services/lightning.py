@@ -44,6 +44,7 @@ class LightningService:
         entry["pending"] = True
         entry["abnormal"] = False
         rows.append(entry)
+        store.persist(MODULE)  # 运行期新增写回 var/lightning.json，重启不丢
         return entry, []
 
     def run_action(self, entry_id: int, action: str) -> tuple[dict[str, Any] | None, str]:
@@ -58,4 +59,5 @@ class LightningService:
         entry["status"] = target
         entry["pending"] = target != STATUS_ORDER[-1]
         entry["abnormal"] = action in NEGATIVE_ACTIONS
+        store.persist(MODULE)  # 测试记录的状态改动落盘，重复初始化也不会清掉
         return entry, f"防雷元件已{action}"

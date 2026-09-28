@@ -85,3 +85,11 @@ desktop.ini
 *.db
 *.pid
 *.seed
+
+# ===== 防雷元件运行期状态（初始化数据在 backend/data/，需要入库） =====
+var/
+backend/var/
+
+# 日志按约定落在 backend/logs/
+backend/logs/
+*.log.*

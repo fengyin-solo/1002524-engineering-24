@@ -4,10 +4,20 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - APP_ENV=local
+      # 线上与本地共用同一份初始化数据：镜像内置 data/lightning_seed.json；
+      # 运行期状态写到挂载卷，容器重启后已有测试记录仍在。
+      - APP_ENV=online
+      - LIGHTNING_SEED_PATH=/srv/app/data/lightning_seed.json
+      - LIGHTNING_STATE_PATH=/srv/var/lightning.json
+      - APP_LOG_PATH=/srv/var/logs/backend.log
+    volumes:
+      - backend_var:/srv/var
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
     depends_on:
       - backend
+
+volumes:
+  backend_var:
