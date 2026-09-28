@@ -4,10 +4,26 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - APP_ENV=local
+      # local=本地开发；线上部署改为 production。初始化数据都来自镜像内置的 data/seed.json
+      - APP_ENV=${APP_ENV:-local}
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - LOG_DIR=/srv/app/logs
+    volumes:
+      # 容器内日志落到约定位置（backend/logs），方便换机后统一收集
+      - ./backend/logs:/srv/app/logs
+    healthcheck:
+      # 自检接口 ok=false（依赖/数据问题）即视为不健康；python 镜像里没有 curl
+      test: ["CMD", "python", "-c", "import json,urllib.request; r=json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/health')); raise SystemExit(0 if r['ok'] else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
+    environment:
+      - VITE_PROXY_TARGET=http://backend:8000
     depends_on:
       - backend

@@ -1,3 +1,4 @@
-fastapi>=0.110
-uvicorn[standard]>=0.29
-pydantic>=2.6
+# 运行依赖（已按可复现的版本钉死；换机或换镜像解析出来的版本一致）
+fastapi==0.141.1
+uvicorn[standard]==0.54.0
+pydantic==2.13.5
